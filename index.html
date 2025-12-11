@@ -1,10 +1,202 @@
-<!DOCTYPE html>
-<html>
+<!--
+  raajhacker - Hacker style single-file website
+  Save this as index.html inside your raajhacker.github.io repository (replace existing)
+  Then commit & push to GitHub. The site will be live at https://raajhacker.github.io
+-->
+<!doctype html>
+<html lang="en">
 <head>
-    <title>Raaj Hacker</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Raaj Hacker — Tools & Playground</title>
+  <meta name="description" content="Raaj Hacker — Tools, scripts and projects. Hacker-style personal homepage." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🖥️</text></svg>">
+  <style>
+    /* Base + hacker aesthetic */
+    :root{
+      --bg:#071018; --panel:#0b1520; --accent:#39ff14; --muted:#9aa7b2; --glass:rgba(255,255,255,0.03);
+      --card:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial; background:var(--bg); color:#e6f1ff;-webkit-font-smoothing:antialiased}
+
+    /* MATRIX background */
+    .matrix{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.15}
+    .wrap{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column}
+
+    header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px}
+    .brand{display:flex;align-items:center;gap:14px}
+    .logo{width:48px;height:48px;border-radius:8px;background:linear-gradient(135deg,#081824,#122233);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent);box-shadow:0 6px 20px rgba(0,0,0,0.6)}
+    h1.site{font-size:18px;margin:0;color:#cfeee0}
+    .tag{font-size:12px;color:var(--muted)}
+
+    nav{display:flex;gap:12px;align-items:center}
+    .btn{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px 12px;border-radius:8px;color:var(--muted);font-size:13px;text-decoration:none}
+    .btn.primary{border-color:rgba(57,255,20,0.12);color:var(--accent);box-shadow:0 6px 18px rgba(57,255,20,0.02)}
+
+    main{padding:28px 20px;flex:1}
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:20px;align-items:start}
+    .card{background:var(--card);border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 8px 30px rgba(2,6,10,0.6)}
+
+    .hero-left h2{margin:0 0 8px 0;font-size:28px;color:#fff}
+    .hero-left p{color:var(--muted);margin:0 0 18px}
+    .terminal{background:#02080a;border-radius:8px;padding:14px;color:var(--accent);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;line-height:1.6}
+
+    .actions{display:flex;gap:12px;margin-top:14px}
+    .big{padding:12px 16px;font-weight:600}
+
+    .tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:18px}
+    .tool{padding:12px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);border:1px solid rgba(255,255,255,0.02)}
+    .tool h4{margin:0;font-size:15px;color:#eaffd0}
+    .tool p{margin:6px 0 0 0;color:var(--muted);font-size:13px}
+
+    aside.right{position:relative}
+    .profile{display:flex;flex-direction:column;gap:8px;text-align:center}
+    .avatar{width:96px;height:96px;border-radius:14px;background:linear-gradient(120deg,#0a2233,#07212a);display:flex;align-items:center;justify-content:center;font-size:36px;color:var(--accent);margin:0 auto}
+    .meta{color:var(--muted);font-size:13px}
+
+    footer{padding:18px 20px;color:var(--muted);font-size:13px;text-align:center;border-top:1px solid rgba(255,255,255,0.02)}
+
+    /* responsive */
+    @media(max-width:900px){.hero{grid-template-columns:1fr}.avatar{width:80px;height:80px}}
+
+    /* small animations */
+    .blink{animation:blink 1.2s infinite}
+    @keyframes blink{0%,60%{opacity:1}61%,100%{opacity:0.15}}
+
+    /* quick search box */
+    .search{display:flex;gap:8px;margin-top:8px}
+    .search input{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:#eaf7e8}
+    .search button{padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--accent)}
+  </style>
 </head>
 <body>
-    <h1>Welcome to Raaj Hacker Website</h1>
-    <p>Website successfully hosted on GitHub Pages!</p>
+  <canvas class="matrix" id="matrix"></canvas>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">RH</div>
+        <div>
+          <h1 class="site">Raaj Hacker</h1>
+          <div class="tag">Tools · Scripts · Playground</div>
+        </div>
+      </div>
+      <nav>
+        <a class="btn" href="#tools">Tools</a>
+        <a class="btn" href="#about">About</a>
+        <a class="btn primary" href="#contact">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-left card">
+          <h2>Welcome to the Raaj Hacker playground</h2>
+          <p>Dark themed tools, scripts, and mini-projects. Use the quick tools below or explore the repo on GitHub.</p>
+
+          <div class="terminal" id="terminal">
+            <div>&gt; git clone https://github.com/Raajsingh857009/raajhacker.github.io</div>
+            <div class="blink">&gt; npm run start</div>
+          </div>
+
+          <div class="actions">
+            <a class="btn big" href="https://github.com/Raajsingh857009/raajhacker.github.io" target="_blank">Open GitHub Repo</a>
+            <a class="btn big primary" href="#tools">Open Tools</a>
+          </div>
+
+          <div class="tools" id="tools">
+            <div class="tool card">
+              <h4>IP Lookup</h4>
+              <p>Quick IP info via public APIs.</p>
+            </div>
+            <div class="tool card">
+              <h4>Phone Lookup</h4>
+              <p>Phone number metadata (country, carrier).</p>
+            </div>
+            <div class="tool card">
+              <h4>QR Generator</h4>
+              <p>Generate QR codes for links & text.</p>
+            </div>
+            <div class="tool card">
+              <h4>Hash Tools</h4>
+              <p>MD5 / SHA1 / SHA256 quick calculator.</p>
+            </div>
+          </div>
+        </div>
+
+        <aside class="right">
+          <div class="card profile">
+            <div class="avatar">RH</div>
+            <div>
+              <div style="font-weight:700;color:#fff">Raaj Singh</div>
+              <div class="meta">Developer · Tools maker</div>
+            </div>
+
+            <div style="margin-top:12px;text-align:left">
+              <div class="meta">Quick search</div>
+              <div class="search">
+                <input id="q" placeholder="Search tools..." />
+                <button id="go">Go</button>
+              </div>
+            </div>
+
+            <div style="margin-top:12px;font-size:13px;color:var(--muted)">Hosted on GitHub Pages · Secure · Free</div>
+          </div>
+        </aside>
+      </section>
+
+      <section id="about" style="margin-top:20px">
+        <div class="card">
+          <h3>About</h3>
+          <p style="color:var(--muted)">This is a compact hacker-themed page optimized for GitHub Pages. All tools are frontend-first — calls to public APIs should be routed through your server or API keys kept secret on the backend.</p>
+        </div>
+      </section>
+
+      <section id="contact" style="margin-top:16px">
+        <div class="card">
+          <h3>Contact</h3>
+          <p style="color:var(--muted)">Email: <strong>raajsinghseller@gmail.com</strong><br>Instagram: <strong>@ethical.hacker_7137</strong></p
+        </div>
+      </section>
+
+    </main>
+
+    <footer>
+      © <span id="yr"></span> Raaj Hacker — Built with ❤️ on GitHub Pages
+    </footer>
+  </div>
+
+  <script>
+    // year
+    document.getElementById('yr').textContent = new Date().getFullYear();
+
+    // small search handler
+    document.getElementById('go').addEventListener('click', ()=>{
+      const q = document.getElementById('q').value.toLowerCase().trim();
+      if(!q) return alert('Type tool name (ip / phone / qr / hash)');
+      if(q.includes('ip')) location.href = '#tools';
+      else if(q.includes('phone')) location.href = '#tools';
+      else if(q.includes('qr')) location.href = '#tools';
+      else if(q.includes('hash')) location.href = '#tools';
+      else alert('Tool not found — open the GitHub repo to request it.');
+    });
+
+    // simple matrix effect
+    (function(){
+      const c = document.getElementById('matrix');
+      const ctx = c.getContext('2d');
+      let w,h; function resize(){w=c.width=innerWidth;h=c.height=innerHeight}
+      addEventListener('resize',resize);resize();
+      const cols = Math.floor(w/12)+1; const drops = Array(cols).fill(0);
+      const chars = '01';
+      function draw(){ctx.fillStyle='rgba(0,0,0,0.06)';ctx.fillRect(0,0,w,h);
+        ctx.fillStyle='rgba(57,255,20,0.12)';ctx.font='12px monospace';
+        for(let i=0;i<drops.length;i++){const x=i*12;const y=drops[i]*14;const ch=chars[Math.floor(Math.random()*chars.length)];ctx.fillText(ch,x,y);if(y>h && Math.random()>0.975) drops[i]=0;drops[i]++;}
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+  </script>
 </body>
-</html>
+          </html>
+                          
